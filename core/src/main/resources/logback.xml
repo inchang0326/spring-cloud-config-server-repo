@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="3 seconds">
+
+    <!-- To enable JMX Management -->
+    <jmxConfigurator/>
+    <property name="logHome" value="./log/"/>
+    <property name="logHomeBackup" value="./log/backup/"/>
+    <timestamp key="bySecond" datePattern="yyyyMMddHHmmss"/>
+
+    <!--
+    Console Appender
+    -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>false</withJansi>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%property{GUID}][%d{HH:mm:ss.SSS}:%highlight(%-5p):%cyan(%c):%L][%thread] %m%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="appenderServer" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${logHome}server.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logHomeBackup}server.log.%d{yyMMdd}</fileNamePattern>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%property{GUID}][%d{HH:mm:ss.SSS}:%-5p:%c{0}:%L] %m%n</pattern>
+        </encoder>
+        <param name="MaxBackupIndex" value="4"/>
+    </appender>
+
+    <!--
+    Service Appender
+    -->
+    <appender name="appenderService" class="ch.qos.logback.classic.sift.SiftingAppender">
+
+        <!-- MDC Value -->
+        <discriminator>
+            <key>logServiceFileName</key>
+            <defaultValue>service</defaultValue>
+        </discriminator>
+
+        <sift>
+            <!-- A standard RollingFileAppender, the log file is based on 'logFileName' at runtime  -->
+            <appender name="${logServiceFileName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+                <file>${logHome}service/${logServiceFileName}</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${logHome}/service/${logServiceFileName}.log.%d{yyMMdd}</fileNamePattern>
+                </rollingPolicy>
+
+                <encoder>
+                    <charset>UTF-8</charset>
+                    <pattern>[%property{GUID}][%d{HH:mm:ss.SSS}:%-5p:%c{0}:%L] %m%n</pattern>
+                </encoder>
+                <param name="MaxBackupIndex" value="4"/>
+            </appender>
+        </sift>
+    </appender>
+
+    <logger name="com.example.exam.biz.card.service" level="debug" additivity="true"> <appender-ref ref="appenderService"/> </logger>
+    <logger name="com.example.exam.biz.card.repo.mybatis" level="debug" additivity="true"> </logger>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="appenderServer"/>
+    </root>
+    <!--
+    ■ slf4j와 logback
+    - slf4j는 자바 오픈소스 로깅 프레임워크고, logback은 slf4j의 구현체다.
+
+    ■ root와 logger, appender
+    - root는 logger 및 appender 인스턴스집합을 관리한다.
+    - logger는 로깅 객체고, appender는 로깅 위치를 설정한다.
+
+    ■ appender 종류
+    (1) ConsoleAppender : 콘솔 출력
+    (2) FileAppender : 파일 출력
+    (3) RollingFileAppender : 날짜, 최대용량 등 부가기능을 설정하여 파일 출력
+    (4) ShiftingAppedenr : 런타임에 로깅을 분리하여(MDC) 각각 다른 파일로 적재 가능
+
+    >> XML 정의 Desc
+    현재 root 로깅 위치를 콘솔과 파일(RollingFileAppender)로 설정했다.
+    따라서 해당 프로젝트에서 Logger를 통해 로깅하는 내용이 모두 콘솔과 파일로 등록된다.
+    ShiftingAppender는 root에 설정되어 있지 않으므로, 개별적으로 로깅한다.
+    하지만 이 역시 Logger를 통해 로깅하므로, 해당 내용 모두 root(전역)에서 확인할 수 있다.
+    -->
+</configuration>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.repo.AllianceCardMapper">
+    <select id="selectAllianceCards" resultType="java.util.HashMap">
+        SELECT DECODE(alliance_code, '01', '씨티', '02', '삼성', '03', 'KB국민카드', '04', '신한카드') AS alliance
+             , cardnm
+             , pub_trans_yn
+             , card_type_code
+             , card_benefit
+             , evt_cntn
+        FROM KIC.app_alliance_card
+        WHERE 1=1
+          AND ${today} between apply_stdt and apply_endt
+          AND status_code = '01'
+    </select>
+
+</mapper>

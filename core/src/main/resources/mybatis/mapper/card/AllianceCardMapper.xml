@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.exam.biz.card.repo.mybatis.AllianceCardMapper">
+    <select id="selectAllianceCardList" resultType="java.util.HashMap">
+        SELECT alliance_code
+             , card_gubun_code
+             , cardnm
+             , pub_trans_yn
+             , card_type_code
+             , card_benefit
+             , evt_cntn
+             , apply_stdt
+             , apply_endt
+        FROM KIC.exam_alliance_card
+        WHERE 1=1
+          AND ${today} between apply_stdt and apply_endt
+          AND status_code = '01'
+    </select>
+
+    <select id="selectAllianceCard" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT alliance_code
+             , card_gubun_code
+             , cardnm
+             , pub_trans_yn
+             , card_type_code
+             , card_benefit
+             , evt_cntn
+             , apply_stdt
+             , apply_endt
+        FROM KIC.exam_alliance_card
+        WHERE 1=1
+          AND ${map.today} between apply_stdt and apply_endt
+          AND alliance_code = ${map.allianceCode}
+          AND card_gubun_code = '${map.cardGubunCode}'
+          AND status_code = '01'
+          AND ROWNUM = 1
+        ]]>
+    </select>
+
+    <select id="hasCard" resultType="String">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM KIC.exam_alliance_card_recp
+        WHERE 1=1
+          AND cstno = '${map.cstno}'
+          AND alliance_code = '${map.allianceCode}'
+          AND card_gubun_code = '${map.cardGubunCode}'
+        ]]>
+    </select>
+
+    <select id="selectCardApplyHistory" resultType="String">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM KIC.exam_alliance_card_appc
+        WHERE 1=1
+          AND cstno = '${map.cstno}'
+          AND appc_dt = '${map.today}'
+          AND alliance_code = '${map.allianceCode}'
+          AND card_gubun_code = '${map.cardGubunCode}'
+        ]]>
+    </select>
+
+    <select id="selectCardApplyHistoryForLock" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM KIC.exam_alliance_card_appc
+        WHERE 1=1
+          AND cstno = '${map.cstno}'
+          AND appc_dt = '${map.today}'
+          AND alliance_code = '${map.allianceCode}'
+          AND card_gubun_code = '${map.cardGubunCode}'
+        ]]>
+    </select>
+
+    <insert id="insertCardApplyHistory" parameterType="java.util.HashMap">
+        insert into KIC.exam_alliance_card_appc
+        values( nvl('${map.today}', ' ')
+              , KIC.SEQ_EXAM_ALLIANCE_CARD_APPC.nextval
+              , nvl('${map.cstno}', ' ')
+              , nvl('${map.cardTypeCode}', ' ')
+              , nvl('${map.pubTransYn}', ' ')
+              , nvl('${map.lmtMoneyCode}', ' ')
+              , nvl('${map.linkAccno}', ' ')
+              , nvl('${map.termsOfServiceYn}', ' ')
+              , nvl('${map.marketingYn}', ' ')
+              , nvl('${map.instRateReduceYn}', ' ')
+              , nvl('${map.revolvingYn}', ' ')
+              , nvl('${map.cardpw}', ' ')
+              , nvl('${map.cardLoanYn}', ' ')
+              , nvl('${map.payDt}', ' ')
+              , nvl('${map.payAlarmCode}', ' ')
+              , nvl('${map.appcProcsCode}', ' ')
+              , nvl('${map.allianceCode}', ' ')
+              , nvl('${map.cardGubunCode}', ' ')
+              , nvl('${map.cardOpenYn}', ' ')
+              , nvl('${map.cardTransNo}', ' ')
+              )
+    </insert>
+
+    <update id="updateCardApplyHistory" parameterType="java.util.HashMap">
+        update KIC.exam_alliance_card_appc
+        set appc_dt = nvl('${map.today}', ' ')
+          , appc_seqno = nvl('${map.appcSeqno}', ' ')
+          , cstno = nvl('${map.cstno}', ' ')
+          , card_type_code = nvl('${map.cardTypeCode}', ' ')
+          , pub_trans_yn = nvl('${map.pubTransYn}', ' ')
+          , lmt_money_code = nvl('${map.lmtMoneyCode}', ' ')
+          , link_accno = nvl('${map.linkAccno}', ' ')
+          , terms_of_service_yn = nvl('${map.termsOfServiceYn}', ' ')
+          , marketing_yn = nvl('${map.marketingYn}', ' ')
+          , inst_rate_reduce_yn = nvl('${map.instRateReduceYn}', ' ')
+          , revolving_yn = nvl('${map.revolvingYn}', ' ')
+          , cardpw = nvl('${map.cardpw}', ' ')
+          , card_loan_yn = nvl('${map.cardLoanYn}', ' ')
+          , pay_dt = nvl('${map.payDt}', ' ')
+          , pay_alarm_code = nvl('${map.payAlarmCode}', ' ')
+          , appc_procs_code = nvl('${map.appcProcsCode}', ' ')
+          , alliance_code = nvl('${map.allianceCode}', ' ')
+          , card_gubun_code = nvl('${map.cardGubunCode}', ' ')
+          , card_open_yn = nvl('${map.cardOpenYn}', ' ')
+          , card_trans_no = nvl('${map.cardTransNo}', ' ')
+        WHERE 1=1
+          AND cstno = '${map.cstno}'
+          AND appc_dt = '${map.today}'
+          AND alliance_code = '${map.allianceCode}'
+          AND card_gubun_code = '${map.cardGubunCode}'
+    </update>
+</mapper>

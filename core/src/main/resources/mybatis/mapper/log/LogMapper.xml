@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.exam.biz.log.repo.mybatis.LogMapper">
+    <insert id="logging" parameterType="java.util.HashMap">
+        insert into KIC.EXAM_TRANS_LOG
+        values( nvl('${map.guid}', ' ')
+                , nvl('${map.io}', ' ')
+                , nvl('${map.cstno}', ' ')
+                , nvl('${map.sevcId}', ' ')
+                , nvl('${map.retCd}', ' ')
+                , nvl('${map.retMsg}', ' ')
+                , nvl('${map.regDt}', ' ')
+                , nvl('${map.regTm}', ' ')
+                , KIC.SEQ_EXAM_TRANS_LOG.nextval
+                )
+    </insert>
+</mapper>

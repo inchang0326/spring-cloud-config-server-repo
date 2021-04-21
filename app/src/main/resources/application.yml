@@ -1,0 +1,25 @@
+server:
+  port: 8082
+
+app:
+  secret: teady
+
+spring:
+  profiles:
+    active: local
+  mybatis:
+    typeAliasesPackage: com.example.app.model
+    configLocation: classpath:mybatis/mybatis-config.xml
+    mapperLocation: classpath:mybatis/mapper/**/*.xml
+
+db:
+  driver-class-name: oracle.jdbc.OracleDriver
+  jdbcUrl: jdbc:oracle:thin:@localhost:1521:orcl
+  userName: kic
+  password: awds1329
+  dialect: org.hibernate.dialect.Oracle10gDialect
+  hikari:
+    maximumPoolSize : 10
+    minimumIdle: 5
+    idleTimeout: 10000
+    dialect:
